@@ -1063,9 +1063,12 @@ fn encode_str_no_len(typ: u16, s: &str, out: &mut dyn Write) -> io::Result<()> {
 }
 
 fn decode_str(typ: u16, buf: &[u8], len: usize) -> Result<&str, StunError> {
-    if len > 128 {
+    // RFC 5389: "less than 128 characters (which can be as long as 763 bytes)"
+    // We allow up to 763 bytes for USERNAME, otherwise 128 bytes for other attributes.
+    let max_bytes = if typ == Attributes::USERNAME { 763 } else { 128 };
+    if len > max_bytes {
         return Err(StunError::Parse(format!(
-            "0x{typ:04x?} too long str len: {len}"
+            "0x{typ:04x?} too long str len: {len} (max {max_bytes})"
         )));
     }
     match str::from_utf8(&buf[0..len]).ok() {

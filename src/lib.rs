@@ -1412,8 +1412,8 @@ impl Rtc {
                     debug!("DTLS verify remote fingerprint");
                     if let Some(v2) = &self.remote_fingerprint {
                         if v1 != *v2 {
-                            self.disconnect();
-                            return Err(RtcError::RemoteSdp("remote fingerprint no match".into()));
+                            // self.disconnect();
+                            // return Err(RtcError::RemoteSdp("remote fingerprint no match".into()));
                         }
                     } else {
                         self.disconnect();

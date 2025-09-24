@@ -115,6 +115,9 @@ impl Dtls {
             return Ok(());
         }
 
+        debug!("calling handle_handshake from handle_receive");
+        self.handle_handshake()?;
+
         Ok(self.dtls_impl.handle_receive(message, &mut self.events)?)
     }
 

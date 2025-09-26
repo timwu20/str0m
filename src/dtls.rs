@@ -114,7 +114,7 @@ impl Dtls {
             debug!("Ignoring DTLS datagram prior to DTLS start");
             return Ok(());
         }
-
+        debug!("message {:?}", message);
         debug!("calling handle_handshake from handle_receive");
         self.handle_handshake()?;
 

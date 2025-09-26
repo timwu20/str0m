@@ -117,8 +117,21 @@ impl Dtls {
         debug!("message {:?}", message);
         // debug!("calling handle_handshake from handle_receive");
         // self.handle_handshake()?;
+        
+        let len_before = self.events.len();
+        let result = self.dtls_impl.handle_receive(message, &mut self.events)?;
 
-        Ok(self.dtls_impl.handle_receive(message, &mut self.events)?)
+        if self.remote_fingerprint.is_none() && self.events.len() > len_before {
+            for ev in &self.events {
+                if let DtlsEvent::RemoteFingerprint(fingerprint) = ev {
+                    self.remote_fingerprint = Some(fingerprint.clone());
+                }
+            }
+        }
+
+        Ok(result)
+
+        // Ok(self.dtls_impl.handle_receive(message, &mut self.events)?)
     }
 
     /// Handle handshaking.
